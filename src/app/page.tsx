@@ -157,7 +157,8 @@ export default function Home() {
         document.body.removeChild(link);
       } catch (fallbackError) {
         console.error('Both export methods failed:', fallbackError);
-        alert(`Export failed: ${fallbackError.message || 'Unknown error'}. This may be due to browser compatibility issues.`);
+        const errorMessage = fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
+        alert(`Export failed: ${errorMessage}. This may be due to browser compatibility issues.`);
       }
     }
   };
