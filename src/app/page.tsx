@@ -272,10 +272,10 @@ export default function Home() {
     if (selectedRow.bcdVerdict === "Fake") return null;
     
     // When Age > 21 and Expired and BCD Status is Disabled
-    if (selectedRow.age >= 21 && selectedRow.event.includes("Expired") && selectedRow.bcdStatus === "Disabled") return "BCD Disabled";
+    if (selectedRow.age >= 21 && selectedRow.event.includes("Expired") && selectedRow.bcdStatus === "Disabled") return "BCD DISABLED";
     
     // When Age > 21 and Expired and BCD Status is Disconnected
-    if (selectedRow.age >= 21 && selectedRow.event.includes("Expired") && selectedRow.bcdStatus === "Disconnected") return "BCD Off";
+    if (selectedRow.age >= 21 && selectedRow.event.includes("Expired") && selectedRow.bcdStatus === "Disconnected") return "BCD OFF";
     
     // When Age > 21 and Expired and BCD Verdict is "Unsure"
     if (selectedRow.age >= 21 && selectedRow.event.includes("Expired") && selectedRow.bcdVerdict === "Unsure") return "and ID Expired";
