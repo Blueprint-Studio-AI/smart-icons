@@ -93,6 +93,7 @@ export default function Home() {
   });
   const [icon1Override, setIcon1Override] = useState<IconType>("alcohol");
   const [icon2Override, setIcon2Override] = useState<IconType>("tobacco");
+  const [showExportWarning, setShowExportWarning] = useState(false);
   
   const iconTypes: IconType[] = ["tobacco", "cards", "slots", "marijuana", "alcohol", "vape", "age"];
   
@@ -102,6 +103,9 @@ export default function Home() {
   // Function to export the image display area
   const exportImageDisplay = async () => {
     if (!imageDisplayRef.current) return;
+
+    // Show warning after first click
+    setShowExportWarning(true);
 
     try {
       // Try using dom-to-image as an alternative to html2canvas
@@ -494,6 +498,13 @@ export default function Home() {
               >
                 Export Image
               </button>
+              
+              {/* Warning note that appears after first export click */}
+              {showExportWarning && (
+                <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800 max-w-[300px] text-center">
+                  <p>If image is incomplete, try exporting again.</p>
+                </div>
+              )}
             </>
           ) : (
             <div className="text-center text-gray-500">
