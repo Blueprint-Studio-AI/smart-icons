@@ -305,12 +305,6 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>TokenWorks Smart Icons Refresh - Documentation</title>
-        <meta name="description" content="Documentation and interactive demonstration of TokenWorks Smart Icons Refresh system, showing dynamic icon states based on age verification, BCD status, and verdict conditions." />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-      
       <div className="flex h-screen">
         {/* Left Panel - Table */}
         <div className="w-1/2 p-3 border-r bg-white">
