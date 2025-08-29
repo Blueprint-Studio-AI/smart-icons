@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Head from 'next/head';
 
 type BCDStatus = "On" | "Disabled" | "Disconnected";
@@ -95,6 +95,68 @@ export default function Home() {
   const [icon2Override, setIcon2Override] = useState<IconType>("tobacco");
   
   const iconTypes: IconType[] = ["tobacco", "cards", "slots", "marijuana", "alcohol", "vape", "age"];
+  
+  // Ref for the image display area
+  const imageDisplayRef = useRef<HTMLDivElement>(null);
+
+  // Function to export the image display area
+  const exportImageDisplay = async () => {
+    if (!imageDisplayRef.current) return;
+
+    try {
+      // Try using dom-to-image as an alternative to html2canvas
+      const domtoimage = (await import('dom-to-image')).default;
+      
+      const dataUrl = await domtoimage.toPng(imageDisplayRef.current, {
+        quality: 1,
+        bgcolor: '#ffffff',
+        width: 300 * 2,
+        height: 533 * 2,
+        style: {
+          transform: 'scale(2)',
+          transformOrigin: 'top left'
+        }
+      });
+      
+      // Create download link
+      const link = document.createElement('a');
+      link.download = `smart-icons-${selectedRow?.event?.replace(/[^a-zA-Z0-9]/g, '-') || 'display'}-${Date.now()}.png`;
+      link.href = dataUrl;
+      
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('dom-to-image failed, trying html2canvas fallback:', error);
+      
+      // Fallback to html2canvas with minimal options
+      try {
+        const html2canvas = (await import('html2canvas')).default;
+        
+        const canvas = await html2canvas(imageDisplayRef.current, {
+          backgroundColor: '#ffffff',
+          scale: 1, // Reduced scale to avoid issues
+          logging: false,
+          useCORS: false,
+          allowTaint: false
+        });
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.download = `smart-icons-${selectedRow?.event?.replace(/[^a-zA-Z0-9]/g, '-') || 'display'}-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (fallbackError) {
+        console.error('Both export methods failed:', fallbackError);
+        alert(`Export failed: ${fallbackError.message || 'Unknown error'}. This may be due to browser compatibility issues.`);
+      }
+    }
+  };
 
   // Function to get icon variant based on rules
   const getIconVariant = (selectedRow: TableRow | null): string => {
@@ -342,84 +404,97 @@ export default function Home() {
         )}
         
         {/* Image display area */}
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex flex-col items-center justify-center">
           {selectedRow ? (
-            <div className="w-[300px] h-[533px] bg-white border border-gray-200 rounded shadow relative overflow-hidden">
-              {/* Background image */}
+            <>
               <div 
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: 'url(/background.png)' }}
-              />
-              
-              {/* Icon slots row - 489px from top (scaled to 204px for 300px width) */}
-              <div 
-                className="absolute w-full flex flex-row gap-2 px-2"
-                style={{ top: '204px' }}
+                ref={imageDisplayRef}
+                className="w-[300px] h-[533px] bg-white border border-gray-200 rounded shadow relative overflow-hidden"
               >
-                {/* Icon 1 */}
-                <div className="w-[71px] h-[71px] relative">
-                  <img 
-                    src={`/icons/icon_${icon1Override}${getIconVariant(selectedRow)}.png`}
-                    alt={`Icon 1: ${icon1Override}`}
-                    className="w-full h-full object-contain"
-                  />
+                {/* Background image */}
+                <div 
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: 'url(/background.png)' }}
+                />
+                
+                {/* Icon slots row - 489px from top (scaled to 204px for 300px width) */}
+                <div 
+                  className="absolute w-full flex flex-row gap-2 px-2"
+                  style={{ top: '204px' }}
+                >
+                  {/* Icon 1 */}
+                  <div className="w-[71px] h-[71px] relative">
+                    <img 
+                      src={`/icons/icon_${icon1Override}${getIconVariant(selectedRow)}.png`}
+                      alt={`Icon 1: ${icon1Override}`}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  
+                  {/* Icon 2 */}
+                  <div className="w-[71px] h-[71px] relative">
+                    <img 
+                      src={`/icons/icon_${icon2Override}${getIconVariant(selectedRow)}.png`}
+                      alt={`Icon 2: ${icon2Override}`}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  
+                  {/* Age Background Icon */}
+                  <div className="w-[71px] h-[71px] relative flex items-center justify-center">
+                    <img 
+                      src={`/icons/bg_age${getIconVariant(selectedRow)}.png`}
+                      alt="Age background"
+                      className="w-full h-full object-contain absolute inset-0"
+                    />
+                    <p 
+                      className="relative z-10 text-4xl mt-[3]"
+                      style={{
+                        color: getIconVariant(selectedRow) === '_idle' ? '#9A9A9A' :
+                               getIconVariant(selectedRow) === '_ok' ? '#F4FFFB' :
+                               getIconVariant(selectedRow) === '_unsure' ? '#786D01' :
+                               '#FFF4F4'
+                      }}
+                    >
+                      {selectedRow?.bcdVerdict === "Fake" ? "0" : selectedRow?.age}
+                    </p>
+                  </div>
+                  
+                  {/* BCD Icon */}
+                  <div className="w-[71px] h-[71px] relative">
+                    <img 
+                      src={`/icons/${getBCDIcon(selectedRow)}`}
+                      alt="BCD status"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
                 </div>
                 
-                {/* Icon 2 */}
-                <div className="w-[71px] h-[71px] relative">
-                  <img 
-                    src={`/icons/icon_${icon2Override}${getIconVariant(selectedRow)}.png`}
-                    alt={`Icon 2: ${icon2Override}`}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                
-                {/* Age Background Icon */}
-                <div className="w-[71px] h-[71px] relative flex items-center justify-center">
-                  <img 
-                    src={`/icons/bg_age${getIconVariant(selectedRow)}.png`}
-                    alt="Age background"
-                    className="w-full h-full object-contain absolute inset-0"
-                  />
-                  <p 
-                    className="relative z-10 text-4xl mt-[3]"
-                    style={{
-                      color: getIconVariant(selectedRow) === '_idle' ? '#9A9A9A' :
-                             getIconVariant(selectedRow) === '_ok' ? '#F4FFFB' :
-                             getIconVariant(selectedRow) === '_unsure' ? '#786D01' :
-                             '#FFF4F4'
-                    }}
-                  >
-                    {selectedRow?.bcdVerdict === "Fake" ? "0" : selectedRow?.age}
-                  </p>
-                </div>
-                
-                {/* BCD Icon */}
-                <div className="w-[71px] h-[71px] relative">
-                  <img 
-                    src={`/icons/${getBCDIcon(selectedRow)}`}
-                    alt="BCD status"
-                    className="w-full h-full object-contain"
-                  />
+                {/* Text overlay area - 667px from top (scaled to 278px for 300px width) */}
+                <div 
+                  className={`absolute w-full h-[42px] flex flex-col items-center ${
+                    getSmallText(selectedRow) ? 'justify-center gap-0.5' : 'justify-center'
+                  }`}
+                  style={{ 
+                    top: '278px',
+                    backgroundColor: getTextOverlayBgColor(selectedRow)
+                  }}
+                >
+                  <p className="text-black text-[18px] leading-none">{getLargeText(selectedRow)}</p>
+                  {getSmallText(selectedRow) && (
+                    <p className="text-black text-[12px] leading-none">{getSmallText(selectedRow)}</p>
+                  )}
                 </div>
               </div>
               
-              {/* Text overlay area - 667px from top (scaled to 278px for 300px width) */}
-              <div 
-                className={`absolute w-full h-[42px] flex flex-col items-center ${
-                  getSmallText(selectedRow) ? 'justify-center gap-0.5' : 'justify-center'
-                }`}
-                style={{ 
-                  top: '278px',
-                  backgroundColor: getTextOverlayBgColor(selectedRow)
-                }}
+              {/* Export button below image */}
+              <button
+                onClick={exportImageDisplay}
+                className="mt-6 px-3 py-2 text-sm bg-gray-400 text-white rounded hover:bg-gray-500 transition-colors"
               >
-                <p className="text-black text-[18px] leading-none">{getLargeText(selectedRow)}</p>
-                {getSmallText(selectedRow) && (
-                  <p className="text-black text-[12px] leading-none">{getSmallText(selectedRow)}</p>
-                )}
-              </div>
-            </div>
+                Export Image
+              </button>
+            </>
           ) : (
             <div className="text-center text-gray-500">
               <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center mb-2 mx-auto">
