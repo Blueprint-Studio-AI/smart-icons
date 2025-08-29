@@ -271,6 +271,12 @@ export default function Home() {
     // When BCD Verdict is "Fake", disable small text
     if (selectedRow.bcdVerdict === "Fake") return null;
     
+    // When Age > 21 and Expired and BCD Status is Disabled
+    if (selectedRow.age >= 21 && selectedRow.event.includes("Expired") && selectedRow.bcdStatus === "Disabled") return "BCD Disabled";
+    
+    // When Age > 21 and Expired and BCD Status is Disconnected
+    if (selectedRow.age >= 21 && selectedRow.event.includes("Expired") && selectedRow.bcdStatus === "Disconnected") return "BCD Off";
+    
     // When Age > 21 and Expired and BCD Verdict is "Unsure"
     if (selectedRow.age >= 21 && selectedRow.event.includes("Expired") && selectedRow.bcdVerdict === "Unsure") return "and ID Expired";
     
@@ -282,6 +288,9 @@ export default function Home() {
     
     // When Age > 21 and BCD Verdict is "Unsure"
     if (selectedRow.age >= 21 && selectedRow.bcdVerdict === "Unsure") return "Tap Here for Info";
+    
+    // When Age < 21 and Expired and BCD Status is "On" and BCD Verdict is "Ok"
+    if (selectedRow.age < 21 && selectedRow.event.includes("Expired") && selectedRow.bcdStatus === "On" && selectedRow.bcdVerdict === "Ok") return "ID Expired";
     
     // When Age < 21 and BCD Verdict is "Ok", disable small text
     if (selectedRow.age < 21 && selectedRow.bcdVerdict === "Ok") return null;
