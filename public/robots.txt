@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /
+
+# This is a private prototype site
+# No crawling or indexing allowed

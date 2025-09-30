@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'P22MackinacPro';
+  src: url('/fonts/P22MackinacPro-Medium_26.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'P22MackinacPro';
+  src: url('/fonts/P22MackinacPro-ExtraBold_12.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -10,6 +26,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-mackinac: 'P22MackinacPro', system-ui, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
