@@ -36,7 +36,7 @@ export default function AV3Box() {
         top: '20px',
         left: '20px',
         color: '#16161C',
-        fontSize: '2rem',
+        fontSize: '1.6rem',
         zIndex: 3,
         margin: 0,
       }}>
@@ -46,10 +46,10 @@ export default function AV3Box() {
       {/* Instructions */}
       <p style={{
         position: 'absolute',
-        top: '70px',
+        top: '55px',
         left: '20px',
         color: '#6b7280',
-        fontSize: '0.9rem',
+        fontSize: '0.8rem',
         zIndex: 3,
         margin: 0,
         fontFamily: 'Inter, system-ui, sans-serif',
