@@ -38,7 +38,7 @@ export default function Nav() {
   
   return (
     <div className="w-full py-2 px-3 flex flex-row justify-between bg-gray-50 border-b-1">
-      <p>{currentVersion?.name}<span className="text-gray-400"> - {currentVersion?.date}</span></p>
+      <p><span className="text-black">{currentVersion?.name}</span><span className="text-gray-400"> - {currentVersion?.date}</span></p>
       <div
         className="relative"
         onMouseLeave={() => setNavOpen(false)}
@@ -57,7 +57,7 @@ export default function Nav() {
                   onClick={() => handleSelectVersion(version.route)}
                   >
                     <div className="flex flex-row justify-between items-start gap-2">
-                      <p>{version.name}</p>
+                      <p className="text-black">{version.name}</p>
                       <p className="text-xs text-gray-500">{version.date}</p>
                     </div>
                     <p className="text-xs text-gray-500">{version.description}</p>
